@@ -1,10 +1,37 @@
 {% extends 'base.html' %}
 
 
-{% block title %}
-  {{ super() }} - Home
-{% endblock %}
-
 {% block app_content %}
-<h1>Home</h1>
+<div class="row">
+  <div class="col-md-12">
+    <h1>{{ title }}</h1>
+  </div> <!-- end col 12 -->
+</div> <!-- end row-->
+
+<div class="row">
+  <div class="col-md-12"><img src="http://placehold.it/800x150" alt="Placeholder" class="banner">
+  </div> <!-- col 12 for img -->
+</div> <!--ends row for banner-->
+
+<!-- there is a way to tell which iteration your on -->
+<!-- LOOP THROUGH PRODUCTS AND ADD EACH CARD-->
+{% for product in products %}
+{% if loop.index == 1 or loop.index % 3 == 1 %}
+  <div class="row">
+    {% endif %}
+    <div class="col-md-4">
+      <div class="card">
+        <img src="http://placehold.it/250x250" alt="placeholder" class="card-img">
+        <div class="card-title">{{ product.title }}</div>
+        <div class="card-subtitle">${{product.price}}</div>
+        <div class="card-text">
+          <p>{{ product.desc }}</p>
+        </div>
+        <button onclick="alert({{ product.id }})" class="btn btn-primary">Add to Cart</button>
+      </div> <!-- end card -->
+    </div> <!--col 4 -->
+    {% if loop.index % 3 == 0 %}
+  </div> <!--row-->
+  {% endif %}
+  {% endfor %}
 {% endblock %}
