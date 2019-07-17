@@ -1,7 +1,7 @@
 from app import app
 
 from flask import render_template, url_for, redirect
-from app.forms import TitleForm, ContactForm, LoginForm, RegisterForm
+from app.forms import TitleForm, ContactForm, LoginForm, RegisterForm, PostForm
 
 
 
@@ -86,3 +86,40 @@ def contact():
         #TODO: setup code
         password
     return render_template('form.html', form=form, title='Contact Us')
+#temporary variable for testing, generally don't declare variables there
+posts = [
+    {
+        'post_id': 1,
+        'tweet': 'My favorite suit is spades.',
+        'date_posted': '7/17/2019'
+    },
+
+    {
+        'post_id': 2,
+        'tweet': 'I like Boston',
+        'date_posted': '7/18/2019'
+    },
+
+    {
+        'post_id': 3,
+        'tweet': 'My cat got sprayed by a skunk',
+        'date_posted': '7/19/2019'
+    }
+]
+@app.route('/profile', methods=['GET', 'POST'])
+def profile():
+    form = PostForm()
+
+    if form.validate_on_submit():
+        posts.append(
+        {
+            'post_id': len(posts) + 1,
+            'tweet': form.tweet.data,
+            'date_posted': 7/17/2019
+
+        }
+        )
+        print(form.tweet.data)
+        return redirect(url_for('profile'))
+
+    return render_template('profile.html', title='Profile', form=form, posts=posts)
