@@ -8,13 +8,13 @@
 <div class="card">
   <img src="http://placehold.it/250x250" alt="Placehold" class="card-img">
   <div class="card-title">
-  Max Smith
+  {{ user.first_name }} {{ user.last_name }}
   </div> <!-- ends card title -->
   <div class="card-subtitle">
-  @maxsmith
+  @{{ user.username }}
   </div> <!-- ends card subtitle -->
   <div class="card-text">
-  <p>This is a biography.</p>
+  <p>{{ user.bio }}</p>
   </div> <!-- ends card text -->
   <button class="btn btn-primary">
     Follow
@@ -22,15 +22,18 @@
 </div> <!-- ends card -->
   </div> <!-- ends col 4 -->
   <div class="col-md-8">
+    {% if user.username == current_user.username %}
     <div class="card">
       {{wtf.quick_form(form)}}
     </div>
-      {% for post in posts[::-1]%}
+    {% endif %}
+
+      {% for post in user.posts[::-1]%}
     <div class="card small-margin">
       <img src="http://placehold.it/25x25" alt="Profile Pic" class="post-img">
       <div class="card-title tweet">{{ post.tweet }}</div>
       <div class="card-subtitle date">{{ post.date_posted.date() }}</div>
-      <div class="card-subtitle handle">@maxsmith</div>
+      <div class="card-subtitle handle">@{{ user.username }}</div>
     </div>
       {% endfor %}
 
