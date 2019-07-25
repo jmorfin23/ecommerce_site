@@ -72,7 +72,7 @@ def login():
         #query the database for theh user trying to login
         user = User.query.filter_by(email=form.email.data).first()
         #if user doesnt exist, reload the page and flash Message
-        if user is None2 or not user.check_password(form.password.data):
+        if user is None or not user.check_password(form.password.data):
             flash('Credentials are incorrect.')
             return redirect(url_for('login'))
     #if user does exist, and credentials are correct, log them in and send them to their profile page
