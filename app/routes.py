@@ -1,9 +1,9 @@
 from app import app, db
-from flask import render_template, url_for, redirect, flash
+from flask import render_template, url_for, redirect, flash, jsonify, request
 from app.forms import TitleForm, ContactForm, LoginForm, RegisterForm, PostForm
 from app.models import Post, Contact, User
 from flask_login import current_user, login_user, logout_user, login_required
-
+import requests
 
 
 @app.route('/')
@@ -64,12 +64,12 @@ def title():
 def login():
     #check to see if user is logged in
     if current_user.is_authenticated:
-        flas('You are already logged in')
+        flash('You are already logged in')
         return redirect(url_for('index'))
     form = LoginForm()
 
     if form.validate_on_submit():
-        #query the database for theh user trying to login
+        #query the database for the user trying to login
         user = User.query.filter_by(email=form.email.data).first()
         #if user doesnt exist, reload the page and flash Message
         if user is None or not user.check_password(form.password.data):
@@ -195,3 +195,68 @@ def profile(username):
 def logout():
     logout_user()
     return redirect(url_for('login'))
+
+
+
+
+
+
+@app.route('/api/posts/retrieve', methods=['GET'])
+def getPosts():
+    try:
+        usename = request.args.get('username')
+
+        #query database for the users tweets
+        user = User.query.filter_by(username=username).first()
+
+        #traverse through user posts and put into new list, the user.posts
+        #attribute is actually a class
+        data = []
+        for post in user.posts:
+            data.append(
+            {
+
+                'post_id': post.post_id,
+                'user_id': post.user_id ,
+                'tweet': post.tweet,
+                'date_posted': post.date_posted
+            }
+
+            )
+        return jsonify({
+        'Success': f'Query successful for {username}',
+        'username': username,
+        'posts': data
+        })
+
+    except:
+        return jsonify({'error': 'Error #001: Invalid parameters'})
+
+@app.route('/api/posts/save', methods=['POST'])
+def savePost():
+    #grab parameters for posting
+    username = request.args.get('username')
+    tweet = request.args.get('tweet')
+
+    #query the user table, if user doesn't exist, return Error
+
+    user = User.query.filter_by(username=username).first()
+
+    if not user:
+        return jsonify({'Error': 'Error #002: Invalid Parameters'})
+
+    post = Post(user_id=user.id, tweet=tweet)
+
+    db.session.add(post)
+    db.session.commit()
+
+    return jsonify({
+    'success': 'Tweet posted. ',
+    'username': user.username,
+    'post_data': {
+        'post_id': post.post_id,
+        'user_id': post.user_id,
+        'tweet': post.tweet,
+        'date_posted': post.date_posted
+    }
+    })
